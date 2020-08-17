@@ -1,6 +1,7 @@
 {{>licenseInfo}}
 
 {{=< >=}}
+import ApiContext from '../ApiContext';
 import ApiClient from "../ApiClient";
 <#imports>import <&import> from '../<#modelPackage><&modelPackage>/</modelPackage><import>';
 </imports>
@@ -17,11 +18,14 @@ export default class <&classname> {
     * <description></description>
     * @alias module:<#invokerPackage><&invokerPackage>/</invokerPackage><#apiPackage><&apiPackage>/</apiPackage><classname>
     * @class
+    * @param {module:<#invokerPackage><&invokerPackage>/</invokerPackage>ApiContext} [apiContext] Optional API client implementation to use,
+   * default to {@link module:ApiContext#instance} if unspecified.
     * @param {module:<#invokerPackage><&invokerPackage>/</invokerPackage>ApiClient} [apiClient] Optional API client implementation to use,
     * default to {@link module:<#invokerPackage><&invokerPackage>/</invokerPackage>ApiClient#instance} if unspecified.
     */</emitJSDoc>
-    constructor(apiClient) {
-        this.apiClient = apiClient || ApiClient.instance;
+    constructor(apiContext, apiClient) {
+        this.apiContext = apiContext || ApiContext.getInstance();
+        this.apiClient = apiClient || ApiClient.getInstance();
     }
 
 <#operations><#operation><#emitJSDoc><^usePromises>
@@ -105,11 +109,11 @@ export default class <&classname> {
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}<#returnType>, with data of type {@link <&vendorExtensions.x-jsdoc-type>}</returnType></usePromises>
      */
 </emitJSDoc>
-    <operationId>(<vendorExtensions.x-codegen-arg-list>) {
+    <operationId>(<vendorExtensions.x-codegen-arg-list>, reject = null) {
+      const apiContext = this.apiContext;
       return this.<operationId>WithHttpInfo(<vendorExtensions.x-codegen-arg-list>)
-        .then(function(response_and_data) {
-          return response_and_data.data;
-        });
+        .then(({ data })=>data)
+        .catch(err => apiContext.handleException(err, reject));
     }
 </usePromises>
 </operation></operations>

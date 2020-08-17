@@ -1,0 +1,66 @@
+{{>licenseInfo}}
+
+import _ from 'lodash';
+
+import httpStatusCode from './HttpStatusCode';
+
+{{#emitJSDoc}}/**
+* @module {{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiContext
+* @version {{projectVersion}}
+*/
+
+/**
+* Manages low level client-server communications, parameter marshalling, etc. There should not be any need for an
+* application to use this class directly - the *Api and model classes provide the public API for the service. The
+* contents of this file should be regarded as internal but are documented for completeness.
+* @alias module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient
+* @class
+*/{{/emitJSDoc}}
+
+const voidFunction = () => ({});
+const throwFunction = err => {
+    throw err;
+};
+
+const isBusinessException = status => {
+    const r = _.find(httpStatusCode, h => h.code === status);
+    return r && r['business'];
+};
+
+const isAuthException = status => {
+    const r = _.find(httpStatusCode, h => h.code === status);
+    return r && r['auth'];
+};
+
+class ApiContext {
+    constructor(options = {}) {
+        const {handleAuthException = throwFunction, handleBusinessException = throwFunction, handleSystemException = throwFunction} = options;
+        this.handleAuthException = handleAuthException;
+        this.handleBusinessException = handleBusinessException;
+        this.handleSystemException = handleSystemException;
+        this.handleException = (err, businessFn = null) => {
+            console.log('ApiContext handleException err ', err);
+            const {exception: {status}, data} = err;
+            if (isAuthException(status)) {
+                this.handleAuthException(err);
+            } else if (isBusinessException(status)) {
+                this.handleBusinessException(err);
+            } else {
+                this.handleSystemException(err);
+            }
+            return data;
+        };
+    }
+
+    static getInstance() {
+        return ApiContext.instance;
+    }
+}
+
+{{#emitJSDoc}}/**
+* The default API client implementation.
+* @type {module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiContext}
+*/{{/emitJSDoc}}
+ApiContext.instance = new ApiContext();
+export default ApiContext;
+export {voidFunction, throwFunction};

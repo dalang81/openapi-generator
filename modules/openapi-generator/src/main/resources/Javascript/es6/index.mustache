@@ -1,5 +1,6 @@
 {{>licenseInfo}}
 
+import ApiContext from './ApiContext';
 import ApiClient from './ApiClient';
 {{#models}}import {{#model}}{{classFilename}}{{/model}} from './{{#modelPackage}}{{modelPackage}}/{{/modelPackage}}{{importPath}}';
 {{/models}}{{#apiInfo}}{{#apis}}import {{importPath}} from './{{#apiPackage}}{{apiPackage}}/{{/apiPackage}}{{importPath}}';
@@ -38,6 +39,13 @@ import ApiClient from './ApiClient';
 */{{/emitJSDoc}}
 export {
     {{=< >=}}
+    
+    <#emitJSDoc>/**
+     * The ApiContext constructor.
+     * @property {module:<#invokerPackage><invokerPackage>/</invokerPackage>ApiContext}
+     */</emitJSDoc>
+    ApiContext,
+    
     <#emitJSDoc>/**
      * The ApiClient constructor.
      * @property {module:<#invokerPackage><invokerPackage>/</invokerPackage>ApiClient}
