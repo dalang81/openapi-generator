@@ -358,6 +358,7 @@ public class JavascriptClientCodegen extends DefaultCodegen implements CodegenCo
         supportingFiles.add(new SupportingFile("ApiContext.mustache", createPath(sourceFolder, invokerPackage), "ApiContext.js"));
         supportingFiles.add(new SupportingFile("HttpStatusCode.mustache", createPath(sourceFolder, invokerPackage), "HttpStatusCode.js"));
         supportingFiles.add(new SupportingFile("ResponseResult.mustache", createPath(sourceFolder, invokerPackage, "model"), "ResponseResult.js"));
+        supportingFiles.add(new SupportingFile("PageResult.mustache", createPath(sourceFolder, invokerPackage, "model"), "PageResult.js"));
         supportingFiles.add(new SupportingFile("Map.mustache", createPath(sourceFolder, invokerPackage, "model"), "Map.js"));
 
     }
